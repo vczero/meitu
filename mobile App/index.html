@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html style="width:100%;height:100%;">
+
+	<head>
+		<!--360极速模式-->
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="format-detection" content="telephone=no" searchtype="map">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="apple-mobile-web-app-title" content="美途">
+		<!--<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />-->
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,minimal-ui">
+		<meta name="misapplication-tap-highlight" content="no" />
+		<!-- uc强制竖屏 -->
+		<meta name="screen-orientation" content="portrait">
+		<!-- QQ强制竖屏 -->
+		<meta name="x5-orientation" content="portrait">
+		<!-- UC强制全屏 -->
+		<meta name="full-screen" content="yes">
+		<!-- QQ强制全屏 -->
+		<meta name="x5-fullscreen" content="true">
+		<!-- UC应用模式 -->
+		<meta name="browsermode" content="application">
+		<!-- QQ应用模式 -->
+		<meta name="x5-page-mode" content="app">
+		<!-- windows phone 点击无高光 -->
+		<meta name="msapplication-tap-highlight" content="no">
+		<title>美途</title>
+		<link rel="apple-touch-icon-precomposed" sizes="180x180" href="retinahd_icon.png">
+		<link type="text/css" rel="stylesheet" href="css/main.css" />
+		<link type="text/css" rel="stylesheet" href="css/font-awesome.css" />
+		<style>
+			#paodan{
+				z-index:19999;position: absolute;right:70px;
+				left:100px;top:50%;height:40px;display:;background-color:#fff;
+				margin-top:-20px;
+			}
+			#paodan_msg{
+				font-size:15px;
+			}
+			
+		</style>
+		
+	</head>
+
+	<body>
+		<!--描述：地图模块-->
+		<div id="map"></div>
+		<!--公共模块-->
+		<div id="common_div_main" class="common_div" style="display:none;">
+			<iframe id="common_div_iframe" class="common_div"></iframe>
+			<div class="common_close fr">
+				<img src="img/iw-close.png"/>
+			</div>
+		</div>
+		<!--上报-->
+		<div class="shangbao_div sh">
+			<div class="shangbao_close fr">
+				<img src="img/iw-close.png"/>
+			</div>
+			<div class="shangbao_title">上报</div>
+			<div class="shangbao_text">
+				<textarea placeholder="遇到紧急情况请上报路况、车辆、人员信息"></textarea>
+			</div>
+			<div class="shangbao_auto">
+				<input type="radio"/>
+				<span>自动上报</span>
+			</div>
+			<div class="shangbao_btn_div">
+				<div class="fl shangbao_microphone">
+					<i class="fa fa-microphone" style="font-size:30px;color:#1BB5FF;"></i>
+				</div>
+				<div class="fr shangbao_submit">
+					<div class="shangbao_btn">提交</div>
+				</div>
+			</div>
+		</div>
+		<!--描述：搜索-->
+		<div class="search">
+			<div class="fl">
+				<img src="img/logo.png" />
+			</div>
+			<div class="fl search_input">
+				<input id="search_input_text" placeholder="请输入产品线路" />
+			</div>
+			<button class="fl search_btn">
+				<i class="fa fa-search" style="font-size:20px;color:#FFFFFF;"></i>
+			</button>
+		</div>
+		
+		<script type="text/template" id="tpl_search">
+			<% for (var i in items){%>
+				<div _index="<%=i%>" style="margin-left:10px;border-bottom:1px solid #ddd;height:35px;line-height:35px;">
+					<i _index="<%=i%>" class="fa fa-search" style="color:#ccc;font-size:15px;"></i>
+					<span _index="<%=i%>" style="font-size:14px;margin-left:4px;">
+						<%=items[i].router%>
+					</span>
+					<span _index="<%=i%>" style="font-size:12px; margin-left:4px;color:#999;">
+						<%=items[i].desc%>
+					</span>
+				</div>
+			<%}%>
+		</script>
+		
+		<div class="auto_complete" id="SEARCH_TPL"></div>
+		<!--描述：其他功能-->
+		<div class="tools">
+			<div id="tools_list" class="sh tools_items">
+				<div style="width:30px;height:30px;">
+					<i class="fa fa-windows" style="color:#999999;margin-top:10px;font-size:20px;"></i>
+				</div>
+			</div>
+			<div id="tools_tucao" class="sh tools_items">
+				<div>
+					<i class="fa fa-weixin" style="color:#999999;"></i>
+				</div>
+				<div>吐槽</div>
+			</div>
+			<div id="tools_huodong" class="sh tools_items">
+				<div>
+					<i class="fa fa-hand-paper-o" style="color:#999999;"></i>
+				</div>
+				<div>活动</div>
+			</div>
+			<div id="tools_tou" class="sh tools_items">
+				<div>
+					<i class="fa fa-bell-o" style="color:#999999;"></i>
+				</div>
+				<div>投票</div>
+			</div>
+			<div id="tools_shangbao" class="sh tools_items">
+				<div>
+					<i class="fa fa-microphone" style="color:#999999;"></i>
+				</div>
+				<div>上报</div>
+			</div>
+			<div id="tools_fenxiang" class="sh tools_items">
+				<div>
+					<i class="fa fa-share-alt" style="color:#999999;"></i>
+				</div>
+				<div>分享</div>
+			</div>
+			<div class="sh tools_items" onclick="(function(){location.reload();return false;})()">
+				<div>
+					<i class="fa fa-refresh" style="color:#999999;"></i>
+				</div>
+				<div>刷新</div>
+			</div>
+		</div>
+		<!--弹窗-->
+		<div class="alert_info sh">
+			<div style="font-size:13px;">下一站你将会经过的景点:</div>
+			<div style="color:#0091FF;">
+				<i class="fa fa-neuter" style="margin-right:5px;"></i>
+				<span id="alert_info_text1">孔子的故乡</span>
+			</div>
+			<div style="color:#0091FF;">
+				<i class="fa fa-neuter" style="margin-right:5px;"></i>
+				<span id="alert_info_text2">孔子的故乡</span>
+			</div>
+			<div style="color:#0091FF;">
+				<i class="fa fa-neuter" style="margin-right:5px;"></i>
+				<span id="alert_info_text3">孔子的故乡</span>
+			</div>
+		</div>
+		<!--仪表盘-->
+		<div id="charts" class="e_charts sh">
+			<div>
+				<div class="e_charts_arrow"></div>
+				<div class="e_charts_0">0</div>
+				<div class="e_charts_120">120</div>
+			</div>
+		</div>
+		<div id="charts_dash" class="charts_data sh">
+			<div class="speed_dash_container">
+				<div class="speed_title">时速</div>
+				<canvas id="speed_dash" style="width:100px;height:50px;" width="100px" height="50px"></canvas>
+				<div class="speed_lable">
+					<div class="fl" style="margin-left:8px;">0</div>
+					<div class="fl" style="margin-left:24px;">km/h</div>
+					<div class="fr" style="margin-right:3px;">120</div>
+				</div>
+			</div>
+			<div class="speed_data">
+				<div style="width:96%;height:20px;margin-left:2%;">
+					<div class="fl">
+						<div>
+							<span>时速:</span>
+							<span id="speed_real" class="speed_title_strong">计算</span>
+						</div>
+					</div>
+					<div class="fr">
+						<div>
+							<span>时长:</span>
+							<span id="total_time" class="speed_title_strong">计算</span>
+						</div>
+					</div>
+				</div>
+				<div style="width:96%;height:20px;margin-left:2%;">
+					<div class="fl" style="clear:both;">
+						<span>到达:</span>
+						<span id="ar_time" class="speed_title_strong">计算</span>
+					</div>
+					<div class="fr">
+						<div>
+							<span>距离:</span>
+							<span id="total_dis" class="speed_title_strong">计算</span>
+						</div>
+					</div>
+				</div>
+				<div style="width:96%;height:20px;clear:both;margin-left:2%;">
+					<span>模拟车速:</span><span>50,000 km/h</span>
+				</div>
+				<div style="min-height:40px;width:96%;margin-left:2%;">
+					<div style="margin-left:5px;width:100%;min-height:40px;">
+						<i class="fa fa-map-marker" style="color:#E82D00;"></i>
+						<span id="real_loc">
+	        					获取中
+	        				</span>
+					</div>
+				</div>
+			</div>
+			<div class="tianqi_div">
+				<div class="fl">
+					<img id="weather_png" src="img/sun.png"/>
+				</div>
+				<div id="weather_du" class="fl tianqi_div_du">
+					32°
+				</div>
+				<div id="weather_feng" class="fl tianqi_div_du" style="font-size:15px;">
+					西南风
+				</div>
+			</div>
+		</div>
+		<!--路线图-->
+		<div class="router sh">
+			<!--<canvas id="router_canvas"></canvas>-->
+			<div class="router_line"></div>
+			<script type="text/template" id="tpl_router">
+				<% for (var i in items){%>
+					<%
+						var top = 5 + parseInt(i) * 22;
+					%>
+					<div class="router_span" style="top:<%=top%>px;">
+						<div class="fl"><%=items[i].content%></div>
+						<div class="fl router_circle" id="router_circle_<%=i%>"></div>
+					</div>
+				<%}%>
+			</script>
+			<div id="ROUTER_TPL"></div>
+		</div>
+		<!--信息窗-->
+		<div class="SN_info" style="display:none;">
+			<div id="SN_info_btn">
+				<i class="fa fa-bars SN_info_btn_icon" style="font-size:17px;"></i>
+			</div>
+			<div id="SN_TPL"></div>
+			<script type="text/template" id="tpl">
+				<div class="SN_info_wrapper">
+					<% for(var i = 0; i < list.length; i++) {%>
+						<div style="width:<%=width%>px;" class="SN_info_item sh">
+							<div class="fl SN_info_tui" style="width:<%=tui_width%>px;">
+								<div style="font-size:14px;font-style: italic;color:#4C4C4C;">
+									<%=i+1%>
+									<span style="font-style:normal;"><%=list[i].content%></span>
+								</div>								
+								<%if(data){%>
+									<%for(var n = 0; n < 5; n++){%>
+									<%var k = n + i * 5; %>
+									<div class="SN_info_tui_div" style="width:<%=tui_width%>px;">
+										<a target="_blank">
+											<i class="fa fa-star SN_info_tui_icon"></i> 
+											<span><%=data[k].name%></span>
+											<span style="color:#999;"><%=data[k].address%></span>
+											<%if(data[k].tel){%>
+												<a href="tel:<%=data[k].tel%>">
+												<span class="SN_info_rmb">
+													<i class="fa fa-phone" style="color:#23BCFF;font-size:16px;"></i>
+												</span>
+												</a>
+											<%}%>
+										</a>
+									</div>
+									<%}%>
+								<%}%>
+							</div>
+							<div class="fr SN_info_img">
+								<img src="img/iio.png" />
+							</div>
+						</div>
+						<% } %>
+				</div>
+			</script>
+		</div>
+		<script type="text/javascript" src="js/lib/gauge.min.js"></script>
+		<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=6a1180467b5f36714645d22044535ab7"></script>
+		<script src='http://123.57.39.116:9797/javascripts/socket.io.js'></script>
+		<script type="text/javascript">
+			var socket = io('http://123.57.39.116:9797');
+		    var win = window;
+		    var doc = win.document;
+		    function showPaodan(name,msg){
+		
+		        if(win.timeer){clearTimeout(win.timeer);win.timeer = null;}
+		
+		        var paodan = [
+		            '    <div style="height:40px;border:1px solid #65b9e8;">',
+		            '        <div style="float:left;">',
+		            '            <img id="paodan_img"  style="width:40px;height:40px;"/>',
+		            '        </div>',
+		            '        <div id="paodan_msg">',
+		            '        </div>',
+		            '    <div style="position:absolute;right:0px;top:0px;width:15px;height:15px;">',
+		            '        <a href="javascript:void(0)" onclick="$(\'#paodan\').hide();if(win.timeer){clearTimeout(win.timeer);win.timeer = null;};" style="width:100%;height:100%;padding:0;margin:0;background-color:#65b9e8;text-align:center;display:block;color:white;list-style-type:none;">',
+		            '            X',
+		            '        </a>',
+		            '    </div>'
+		        ].join('');
+		        
+		        var $paodan = document.getElementById('paodan');
+		        if(!$paodan){
+		        		var _div = document.createElement("div");
+		        		_div.setAttribute("id","paodan");
+		            _div.innerHTML = paodan;
+		            document.body.appendChild(_div);
+		        }
+		        console.log('----------')
+		        document.getElementById('paodan_img').setAttribute("src",'./img/'+name+'.png')
+		        document.getElementById('paodan_msg').innerHTML = msg;
+		        $paodan = document.getElementById('paodan');
+		        $paodan.style.display = "block";
+		        win.timeer = setTimeout(function(){
+		            $paodan.style.display = "none";
+		        },1000)
+		    }
+		    socket.on('paodan showtitle', function (data) {
+		        console.log('paodan showtitle',data);
+		        var data = JSON.parse(data);
+		        showPaodan(data.name,data.html)
+		
+		    });
+		</script>
+		<script type="text/javascript" data-main="js/main" src="js/lib/require.js"></script>
+	</body>
+
+</html>

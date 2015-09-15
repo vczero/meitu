@@ -1,0 +1,530 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui" />
+    <script src="zepto.js"></script>
+    <script src='http://123.57.39.116:9797/javascripts/socket.io.js'></script>
+    <script>
+    var socket = io('http://123.57.39.116:9797');
+    // console.log(socket)
+    </script>
+</head>
+<style>
+    body{
+        padding: 0;
+        margin: 0;
+    }
+    .container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    .panel {
+
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #fff;
+    }
+    .panel_body_container {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        bottom: 50px;
+        top: 45px;
+        overflow-y: scroll;
+        /*overflow: hidden;*/
+    }
+    .chat_container{
+        background: #f2f2f2;
+        /*width: 100%;*/
+        min-height: 100%;
+        padding: 10px;
+    }
+    .chat_content_group{
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 5px;
+        margin: 10px;
+    }
+    .chat_content_group.buddy {
+        text-align: left;
+    }
+    .chat_content_avatar{
+        float: left;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+        border-radius: 20px;
+    }
+    .chat_toolbar {
+        display: -webkit-box;
+        background: #fff;
+        /* color: #fff; */
+        padding: 3px 10px 5px 6px;
+        /* width: 100%; */
+        display: -webkit-box;
+        /*border: 1px solid #333;*/
+
+    }
+    .btn {
+        display: block;
+        position: relative;
+        border: 1px solid;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        padding: .75em 12px;
+        width: 100%;
+        font-family: '微软雅黑','Helvetica Neue',Helvetica,Arial,sans-serif;
+        font-size: 16px;
+    }
+    .add_face_btn {
+        border: 0;
+        background: 0;
+        width: 38px;
+    }
+    .panel .chat_toolbar {
+        padding: 3px 10px 5px 6px;
+
+        /*width: 100%;*/
+    }
+
+    .chat_textarea {
+        display: block;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        padding: 5px 10px;
+        height: 32px;
+        resize: none;
+        -webkit-box-flex: 1;
+        -moz-box-flex: 1;
+        box-flex: 1;
+        margin: 5px 10px 5px 6px;
+        max-height: 80px;
+        overflow: hidden color: #333;
+        /* background: #f9f9f9; */
+        border-bottom: 2px solid #6adcfa;
+    }
+    .panel header {
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+        height: 45px;
+        width: 100%;
+    }
+    .panel footer {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+    }
+    .send_chat_btn {
+        width: 56px;
+        /* padding: 6px 10px!important; */
+        display: block!important;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        margin-top: 5px;
+        background-color: #6adcfa;
+    }
+    .btn_text {
+        max-width: 100px;
+        height: 30px;
+        line-height: 30px;
+        display: block;
+        color: #fff;
+        text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 16px;
+    }
+    .btn_blue {
+        background: -webkit-linear-gradient(top,#5f9cc5,#396b9e);
+    }
+    .chat_content {
+        display: inline-block;
+        min-height: 16px;
+        max-width: 50%;
+        background: #97c94c;
+        /* background: -webkit-gradient(linear,left top,left bottom,from(#cf9),to(#9c3)); */
+        /* background: -webkit-linear-gradient(#cf9,#9c3); */
+        background: -moz-linear-gradient(#cf9,#9c3);
+        background: -ms-linear-gradient(#cf9,#9c3);
+        background: -o-linear-gradient(#cf9,#9c3);
+        /* background: linear-gradient(#cf9,#9c3); */
+        /* -webkit-border-radius: 5px; */
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        padding: 10px 15px;
+        word-break: break-all;
+        /* box-shadow: 1px 1px 5px #000; */
+        line-height: 1.4;
+        margin: 0px;
+        color:#fff;
+    }
+    .chat_nick {
+        font-size: 14px;
+        margin: 0 0 10px;
+    }
+    .im_avatar{
+        display: block;
+        position: absolute;
+        float: left;
+        width: 50px;
+        height: 50px;
+        /* padding: 3px; */
+        border: #b7b7b7 solid 1px;
+        /* background: #fff; */
+        margin-top: -25px;
+        z-index: 2;
+        background-color:#fff;
+    }
+    .d-title {
+        height: 29px;
+        line-height: 28px;
+        padding: 0 28px 0 15px;
+        color: #333!important;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #f2f2f2;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+    .d-title1 {
+        height: 29px;
+        line-height: 28px;
+        /* padding: 0 28px 0 15px; */
+        color: #333!important;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #f2f2f2;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        position: absolute;
+        top: 45px;
+        left: 20px;
+
+    }
+    .im_contactinfo {
+        float: left;
+        margin-left: 66px;
+        color:#6adcfa;
+    }
+    #im_face {
+        display: none;
+        position: absolute;
+        margin: -193px 0 0 -1px;
+        z-index: 3;
+        border: solid 1px #b7b7b7;
+        /*width: 400px;*/
+        height: 190px;
+        font-size: 12px;
+        overflow: hidden;
+        left:0px;
+
+    }
+</style>
+
+<body>
+
+
+
+<div class="container">
+    <div class="panel">
+        <div class="d-title1">
+            <a class="im_avatar" online="" href="javascript:;" uid="795238409283faseafaeeDSIKHJ">
+                <img src="./img/林心如.png" width="50" height="50">
+            </a>
+        </div>
+        <header>
+
+        </header>
+        <div class="panel_body_container">
+            <div class="d-title">
+                <span class="im_contactinfo">林心如</span>
+            </div>
+
+
+            <div class="chat_container">
+                <!--div class="chat_content_group buddy">
+                    <img class="chat_content_avatar" src="./img/林心如.png" width="40px" height="40px">
+
+                    <p class="chat_nick">林心如</p>
+                    <div class="chat_content ">切换class ＋css3？ </div>
+                </div>
+                <div class="chat_content_group buddy">
+                    <img class="chat_content_avatar" src="./img/林心如.png" width="40px" height="40px">
+
+                    <p class="chat_nick">林心如</p>
+                    <div class="chat_content ">切换class ＋css3？ </div>
+                </div>
+                <div class="chat_content_group buddy">
+                    <img class="chat_content_avatar" src="./img/林心如.png" width="40px" height="40px">
+
+                    <p class="chat_nick">林心如</p>
+                    <div class="chat_content ">切换class ＋css3？ </div>
+                </div-->
+            </div>
+        </div>
+        <footer>
+            <div class="chat_toolbar">
+                <div class="btn add_face_btn ">
+                    <img src="./img/chat_bottombar_icon_face.png" style="width:30px;height:30px;"/>
+                </div>
+                <div  class="chat_textarea" contenteditable="true" style="outline:none;">
+
+                </div>
+                <button type="button" class="send_chat_btn" name="button">
+                    <span class="btn_text">发送</span>
+                </button>
+                <div id="im_face" style="display: none;"><ul>
+                    <li class="current">默认表情</li>
+                    <li class="im_faceclose">×</li>
+                </ul>
+                <div class="im_faceico">
+                    <a href="javascript:void(0);" title="微笑" code="/01/"><img src="./img/01.gif"></a>
+                    <a href="javascript:void(0);" title="色" code="/02/"><img src="./img/02.gif"></a>
+                    <a href="javascript:void(0);" title="发呆" code="/03/"><img src="./img/03.gif"></a>
+                    <a href="javascript:void(0);" title="得意" code="/04/"><img src="./img/04.gif"></a>
+                    <a href="javascript:void(0);" title="流泪" code="/05/"><img src="./img/05.gif"></a>
+                    <a href="javascript:void(0);" title="害羞" code="/06/"><img src="./img/06.gif"></a>
+                    <a href="javascript:void(0);" title="闭嘴" code="/07/"><img src="./img/07.gif"></a>
+                    <a href="javascript:void(0);" title="睡" code="/08/"><img src="./img/08.gif"></a>
+                    <a href="javascript:void(0);" title="撇嘴" code="/09/"><img src="./img/09.gif"></a>
+                    <a href="javascript:void(0);" title="大哭" code="/10/"><img src="./img/10.gif"></a>
+                    <a href="javascript:void(0);" title="发怒" code="/11/"><img src="./img/11.gif"></a>
+                    <a href="javascript:void(0);" title="调皮" code="/12/"><img src="./img/12.gif"></a>
+                    <a href="javascript:void(0);" title="呲牙" code="/13/"><img src="./img/13.gif"></a>
+                    <a href="javascript:void(0);" title="惊讶" code="/14/"><img src="./img/14.gif"></a>
+                    <a href="javascript:void(0);" title="难过" code="/15/"><img src="./img/15.gif"></a>
+                    <a href="javascript:void(0);" title="酷" code="/16/"><img src="./img/16.gif"></a>
+                    <a href="javascript:void(0);" title="冷汗" code="/17/"><img src="./img/17.gif"></a>
+                    <a href="javascript:void(0);" title="抓狂" code="/18/"><img src="./img/18.gif"></a>
+                    <a href="javascript:void(0);" title="吐" code="/19/"><img src="./img/19.gif"></a>
+                    <a href="javascript:void(0);" title="偷笑" code="/20/"><img src="./img/20.gif"></a>
+                    <a href="javascript:void(0);" title="可爱" code="/21/"><img src="./img/21.gif"></a>
+                    <a href="javascript:void(0);" title="白眼" code="/22/"><img src="./img/22.gif"></a>
+                    <a href="javascript:void(0);" title="傲慢" code="/23/"><img src="./img/23.gif"></a>
+                    <a href="javascript:void(0);" title="饥饿" code="/24/"><img src="./img/24.gif"></a>
+                    <a href="javascript:void(0);" title="困" code="/25/"><img src="./img/25.gif"></a>
+                    <a href="javascript:void(0);" title="惊恐" code="/26/"><img src="./img/26.gif"></a>
+                    <a href="javascript:void(0);" title="流汗" code="/27/"><img src="./img/27.gif"></a>
+                    <a href="javascript:void(0);" title="憨笑" code="/28/"><img src="./img/28.gif"></a>
+                    <a href="javascript:void(0);" title="大兵" code="/29/"><img src="./img/29.gif"></a>
+                    <a href="javascript:void(0);" title="奋斗" code="/30/"><img src="./img/30.gif"></a>
+                    <a href="javascript:void(0);" title="咒骂" code="/31/"><img src="./img/31.gif"></a>
+                    <a href="javascript:void(0);" title="疑问" code="/32/"><img src="./img/32.gif"></a>
+                    <a href="javascript:void(0);" title="嘘" code="/33/"><img src="./img/33.gif"></a>
+                    <a href="javascript:void(0);" title="晕" code="/34/"><img src="./img/34.gif"></a>
+                    <a href="javascript:void(0);" title="折磨" code="/35/"><img src="./img/35.gif"></a>
+                    <a href="javascript:void(0);" title="衰" code="/36/"><img src="./img/36.gif"></a>
+                    <a href="javascript:void(0);" title="骷髅" code="/37/"><img src="./img/37.gif"></a>
+                    <a href="javascript:void(0);" title="敲打" code="/38/"><img src="./img/38.gif"></a>
+                    <a href="javascript:void(0);" title="再见" code="/39/"><img src="./img/39.gif"></a>
+                    <a href="javascript:void(0);" title="擦汗" code="/40/"><img src="./img/40.gif"></a>
+                    <a href="javascript:void(0);" title="抠鼻" code="/41/"><img src="./img/41.gif"></a>
+                    <a href="javascript:void(0);" title="鼓掌" code="/42/"><img src="./img/42.gif"></a>
+                    <a href="javascript:void(0);" title="糗大了" code="/43/"><img src="./img/43.gif"></a>
+                    <a href="javascript:void(0);" title="坏笑" code="/44/"><img src="./img/44.gif"></a>
+                    <a href="javascript:void(0);" title="左哼哼" code="/45/"><img src="./img/45.gif"></a>
+                    <a href="javascript:void(0);" title="右哼哼" code="/46/"><img src="./img/46.gif"></a>
+                    <a href="javascript:void(0);" title="哈欠" code="/47/"><img src="./img/47.gif"></a>
+                    <a href="javascript:void(0);" title="鄙视" code="/48/"><img src="./img/48.gif"></a>
+                    <a href="javascript:void(0);" title="委屈" code="/49/"><img src="./img/49.gif"></a>
+                    <a href="javascript:void(0);" title="快哭了" code="/50/"><img src="./img/50.gif"></a>
+                    <a href="javascript:void(0);" title="阴险" code="/51/"><img src="./img/51.gif"></a>
+                    <a href="javascript:void(0);" title="亲亲" code="/52/"><img src="./img/52.gif"></a>
+                    <a href="javascript:void(0);" title="吓" code="/53/"><img src="./img/53.gif"></a>
+                    <a href="javascript:void(0);" title="可怜" code="/54/"><img src="./img/54.gif"></a>
+                    <a href="javascript:void(0);" title="啵一个" code="/55/"><img src="./img/55.gif"></a>
+                    <a href="javascript:void(0);" title="猪头" code="/56/"><img src="./img/56.gif"></a>
+                    <a href="javascript:void(0);" title="强" code="/57/"><img src="./img/57.gif"></a>
+                    <a href="javascript:void(0);" title="握手" code="/58/"><img src="./img/58.gif"></a>
+                    <a href="javascript:void(0);" title="胜利" code="/59/"><img src="./img/59.gif"></a>
+                    <a href="javascript:void(0);" title="OK" code="/60/"><img src="./img/60.gif"></a>
+                </div>
+                <style type="text/css">
+                    #im_face ul{height:24px;line-height: 24px;background: #f7f7f7;padding:5px 5px 0 11px;}
+                    #im_face ul li{float: left;padding:0 15px;list-style: none;cursor: pointer; color: #666;}
+                    #im_face ul li.current{background: #fff;color:#c00;}
+                    #im_face ul li.im_faceclose{float:right;line-height: 18px;padding:0 5px;font-size:16px;}
+                    #im_face ul li.im_faceclose:hover{float:right;color:#c00;}
+                    #im_face .im_faceico{margin:11px;background: #fff;}
+                    #im_face .im_faceico a{display:block;width:24px;height:24px;border:solid 1px #dfe6f6;background:#fff;float: left;margin:-1px 0 0 -1px;padding:2px 2px 1px 2px;}
+                    #im_face .im_faceico a:hover{background: #fafafa;}
+                </style>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var win = window;
+    if (self != top) {
+         win = parent.window;
+    }
+    var doc = win.document;
+    console.log(parent);
+
+    $(function(){
+        var names = [
+            "李冰冰",
+            "林心如",
+            "戚薇",
+            "唐嫣",
+            "佟丽娅",
+            "姚晨",
+            "郑爽"
+        ];
+
+        var strKey = "name";
+
+        var radom = Math.floor(Math.random()*(names.length));
+        var name = names[radom];
+        var storage = window.localStorage;
+        if(storage.getItem(strKey)!=null){
+            name = storage.getItem(strKey);
+        }else{
+            storage.setItem(strKey, name);
+        }
+        function showPaodan(name,msg){
+
+            if(win.timeer){clearTimeout(win.timeer);win.timeer = null;}
+
+            var paodan = [
+                '    <div style="height:40px;border:1px solid #65b9e8;">',
+                '        <div style="float:left;">',
+                '            <img id="paodan_img"  style="width:40px;height:40px;"/>',
+                '        </div>',
+                '        <div id="paodan_msg">',
+                '        </div>',
+                '    <div style="position:absolute;right:0px;top:0px;width:15px;height:15px;">',
+                '        <a href="javascript:void(0)" onclick="$(\'#paodan\').hide();if(win.timeer){clearTimeout(win.timeer);win.timeer = null;};" style="width:100%;height:100%;padding:0;margin:0;background-color:#65b9e8;text-align:center;display:block;color:white;list-style-type:none;">',
+                '            X',
+                '        </a>',
+                '    </div>'
+            ].join('');
+            var $paodan = $('#paodan',doc);
+            var len = $paodan.length;
+            if(!len){
+                $('<div id="paodan" style="z-index:19999;position: absolute; width: 100%; left: 0px;top:0px;height:40px;display:;background-color:#fff;">'+paodan+'</div>').appendTo($('body',doc));
+            }
+            console.log('----------')
+            $('#paodan_img',doc).attr("src",'./img/'+name+'.png')
+            $('#paodan_msg',doc).html(msg);
+            $paodan = $('#paodan',doc);
+            $paodan.show();
+            win.timeer = setTimeout(function(){
+                $paodan.hide();
+            },1000)
+        }
+
+
+
+
+        $('.im_contactinfo').html(name);
+        $('.im_avatar').find('img').attr("src","./img/"+name+".png");
+
+        $('.add_face_btn').bind('click',function(){
+            var $im_face = $("#im_face");
+            if($im_face.css("display")!="none"){
+                $im_face.css("display","none")
+            }else{
+                $im_face.css("display","block")
+            }
+
+        })
+        $('.im_faceico').delegate('a',"click",function(){
+            $("#im_face").hide();
+            var code = $(this).attr("code");
+            var id = code.replace(/\//g,"");
+    		var $chat_textarea = $('.chat_textarea');
+            var html = $chat_textarea.html();
+            $chat_textarea.html(html+'<img src="./img/'+id+'.gif">')
+        });
+
+        $('.btn_text').bind('click',function(){
+            var $chat_textarea = $('.chat_textarea');
+            var html = $chat_textarea.html();
+            var data = {
+                "name":name,
+                "html":html
+            }
+            socket.emit('paodan send',JSON.stringify(data));
+            $chat_textarea.html("");
+        });
+
+        var paodanData = [
+            {
+                "name":"林心如",
+                "html":"你好呀"
+            }
+        ]
+        var isShowAll = false;
+        socket.on('paodan showAll', function (msg) {
+    		if(isShowAll)return;
+    		isShowAll = true;
+    		console.log('paodan showAll',msg);
+    		var data = JSON.parse(msg);
+            renderAll(data);
+    	});
+        socket.on('paodan show', function (msg) {
+            var data = JSON.parse(msg);
+            renderItem(data);
+        });
+        function renderAll(data){
+            var len = data.length;
+            for(var i=0;i<len;i++){
+                var item = data[i];
+                renderItem(item);
+            }
+        }
+    	// //#BA01FF
+        function renderItem(data){
+            var $chat_container = $('.chat_container');
+            var $buddy = $('<div class="chat_content_group buddy"></div>');
+            $buddy.html([
+                '<img class="chat_content_avatar" src="./img/'+data.name+'.png" width="40px" height="40px">',
+                '<p class="chat_nick">'+data.name+'</p>',
+                '<div class="chat_content ">'+data.html+'</div>'
+            ].join(""))
+            $chat_container.append($buddy);
+            // var $chat_textarea = $('.chat_textarea');
+            // $chat_textarea.html("");
+//          showPaodan(data.name,data.html)
+
+            var panel_body_container = $('.panel_body_container')[0];
+            panel_body_container.scrollTop = panel_body_container.scrollHeight;
+
+        }
+
+
+
+
+
+
+
+
+
+
+    })
+</script>
+
+
+</body>
+
+</html>

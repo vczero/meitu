@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="format-detection" content="telephone=no" searchtype="map">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,minimal-ui">
+	<meta name="misapplication-tap-highlight" content="no"/>
+	<title>美途</title> 
+	<link type="text/css" rel="stylesheet"  href="css/main.css"/>
+	<link type="text/css" rel="stylesheet"  href="css/font-awesome.css"/>
+</head>
+<body>
+	<div id="map" ></div>
+	<div class="search">
+		<div class="header_logo fl">
+			<div class="fl">
+				<img src="img/logo.png"/>
+			</div>
+			<div class="fl logo">
+				<span class="logo_title">美丽旅途</span>
+				<span class="logo_url">ctrip.com</span>
+			</div>
+		</div>
+		<div class="fl input_div">
+			<input id="search_router" placeholder="请输入旅游线路"/>
+		</div>
+		<!--<div class="fr search_btn">
+			<span>搜索</span>
+		</div>-->
+	</div>
+	<!--搜索列表-->
+	<div class="search_list">
+		<a _index="1">上海－扬州(产品ID:BYUHTRE6)</a>
+		<a _index="2">上海－常州(产品ID:HGFSGSYT)</a>
+		<a _index="3">上海－衢州(产品ID:SUYDWDGB)</a>
+	</div>
+	<!--仪表盘-->
+    <div class="charts_pannel">
+    		<div id="charts" class="charts_div"></div>
+    		<div class="charts_info">
+    			<div>实时车速：<span id="real_speed" style="font-size:15px;color:#E6007C;font-weight:bold;">准备计算</span></div>
+	    		<div>模拟车速：<span>50,000 km/h</span></div>
+	    		<div>到达时间：<span id="real_time" style="font-size:15px;color:#E6007C;font-weight:bold;">计算中</span></div>
+	    		<div>距离：<span id="real_distance" style="font-size:15px;color:#E6007C;font-weight:bold;">计算中</span></div>
+	    		<div>时长：<span id="real_distime" style="font-size:15px;color:#E6007C;font-weight:bold;">计算中</span></div>
+    		</div>
+    		<div>
+    			<span class="fa fa-map-marker" style="color:red;margin-left:5px;margin-top:5px;"></span>
+    			<span id="charts_info_address" style="color:#EA0085;margin-right:3px;font-weight:bold;">计算中</span>
+    		</div>
+    		<div style="width:100%;">
+    			<div id="tem_yin" class="fl tempe" style="color:#FF5718;">阴</div>
+    			<div id="tem_du" class="fl tempe" style="color: #4C4C4C;">23</div>
+    			<div id="tem_feng" class="fl tempe" style="color: #4C4C4C;">西南风</div>
+    		</div>
+    </div>
+    <!--ALert-->
+    <div class="add_mask"></div>
+    <div id="_alert" style="display:none;border:1px solid #ddd;width:260px;height:100px;background-color:#FFF;position:absolute;top:50%;margin-left:-50px;left:50%;margin-left:-100px;">
+    		<div style="width:180px; text-align:center;margin-left:auto;margin-right:auto;margin-top:20px;">请先搜索后再进行查看</div>
+    		<div id="_alert_close" style="width:60px;height:30px;background-color:#00ABFC;text-align: center;line-height:30px;color:#fff;margin-left:auto;margin-right:auto;margin-top:20px;cursor:pointer;">关闭</div>
+    </div>
+    <!--时间轴-->
+    <div id="timeline_pc" class="timeline_pannel" style="display:none;">
+    		<div class="timeline"></div>
+    </div>
+    <div id="timeline_ipad" class="timeline_pannel" style="min-height:100px;width:360px;display: none;opacity: 0.9;">
+    		<div style="height:40px;width:350px;border:2px solid #CC0000;border-radius:20px;margin-top:30px;opacity:0.9;"></div>
+    		<div id="timeline_item_1"></div>
+    </div>
+	<div class="toolbar">
+		<!--<div class="car_run car_run_show">
+			行
+		</div>-->
+		<div class="car_run toupiao" style="background-color:#00C348;">
+			投
+		</div>
+		<div class="car_run danmu" style="background-color:#E82D00;">
+			弹
+		</div>
+		<div class="car_run">
+			<i class="fa fa-info" style="font-size:17px;"></i>
+		</div>
+	</div>
+	<!--	描述：iframe万能框-->
+	<div id="tanmu_div" class="iframe_all">
+		<div class="iframe_all_arrow"></div>
+		<div class="iframe_all_content">
+			<iframe scrolling="no" style="height:40px;border:0;width:100%;" class="iframe_all_iframe" src="http://123.57.39.116:9797/"></iframe>
+		</div>
+		<div>
+			<iframe scrolling="no" style="height:152px;border:0;width:100%;" class="iframe_all_iframe" src="http://123.57.39.116:9797/emit"></iframe>
+		</div>
+	</div>
+	<div id="toupiao_frame" style="display:none;width:350px;height:600px;position:absolute;right:80px;top:70px;background-color:#fff;border:1px solid #ddd;padding:2px;">
+		<iframe scrolling="no" src="http://123.57.39.116:9797/toupiao/index.html" style="width:100%;height:600px;border:0;"></iframe>
+		<div class="iframe_all_arrow" style="top:28px;z-index:80;"></div>
+	</div>
+	<!--<script type="text/javascript" src="js/ani.js"></script>-->
+	<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=6a1180467b5f36714645d22044535ab7"></script>
+	<script type="text/javascript" src="js/zepto.js"></script>
+	<script type="text/javascript" src="js/fx.js"></script>
+	<script type="text/javascript" src="js/fx_methods.js"></script>
+	<script type="text/javascript" src="js/echarts-all.js"></script>
+	<script type="text/javascript" src="js/data.js"></script>
+	<script type="text/javascript" src="js/main.js"></script> 
+</body>  
+</html>
